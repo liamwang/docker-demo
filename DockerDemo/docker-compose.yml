@@ -1,0 +1,55 @@
+﻿version: "3"
+
+volumes:
+  postgresdata:
+
+networks:
+  frontend:
+  backend:
+
+services:
+
+  postgres:
+    image: "postgres:latest"
+    volumes:
+      - postgresdata:/var/lib/postgresql/data
+    networks:
+      - backend
+    environment:
+      - POSTGRES_PASSWORD=postgres.123
+      - bind-address=0.0.0.0
+
+  dbinit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    environment:
+      - INITDB=true
+      - DBHOST=postgres
+    depends_on:
+      - postgres
+
+  mvc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - backend
+      - frontend
+    environment:
+      - DBHOST=postgres
+    depends_on:
+      - postgres
+
+  haproxy:
+    image: dockercloud/haproxy:latest
+    ports:
+      - 3000:80
+    links:
+      - mvc
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - frontend

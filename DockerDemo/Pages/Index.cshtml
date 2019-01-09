@@ -1,0 +1,33 @@
+﻿@page
+@model IndexModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ExampleApp</title>
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body>
+    <h4>@Model.Message</h4>
+    <table class="table">
+        <thead>
+            <tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model.Repository.Products)
+            {
+                <tr>
+                    <td>@p.ProductID</td>
+                    <td>@p.Name</td>
+                    <td>@p.Category</td>
+                    <td>$@p.Price.ToString("F2")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</body>
+</html>
